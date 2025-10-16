@@ -14,10 +14,10 @@ const BUS_ROUTE_OPTIONS = BUS_ROUTE_DATA.map(({ number, name }) => ({
 
 type RouteOption = (typeof BUS_ROUTE_OPTIONS)[number];
 
-type Tab = "bus" | "rail";
+type Mode = "bus" | "rail";
 
 export default function LiveMap() {
-  const [tab, setTab] = useState<Tab>("bus");
+  const [mode, setMode] = useState<Mode>("bus");
   const [showStops, setShowStops] = useState(true);
   const [selectedRoute, setSelectedRoute] = useState<RouteOption | null>(null);
   const [visibleRail, setVisibleRail] = useState<Record<RailLineKey, boolean>>({
@@ -31,38 +31,16 @@ export default function LiveMap() {
   const center = useMemo<[number, number]>(() => [32.7767, -96.7970], []);
   const zoom = 12;
 
-  return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 lg:px-6">
-      {/* Top tabs for Bus/Rail inside Live Map */}
-      <div className="mb-4 flex gap-2">
-        <button
-          onClick={() => setTab("bus")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium ${
-            tab === "bus"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-800 text-slate-200 hover:bg-slate-700"
-          }`}
-        >
-          Bus
-        </button>
-        <button
-          onClick={() => setTab("rail")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium ${
-            tab === "rail"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-800 text-slate-200 hover:bg-slate-700"
-          }`}
-        >
-          Rail
-        </button>
-      </div>
+  const renderPanelContent = (panelMode: Mode) => {
+    const isBus = panelMode === "bus";
+    const isRail = panelMode === "rail";
 
-      {/* Two-column layout: fixed panel + flexible map */}
+    return (
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[340px_1fr]">
         {/* Side panel */}
         <aside className="space-y-4">
           {/* Bus-only filter */}
-          {tab === "bus" && (
+          {isBus && (
             <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
               <h3 className="mb-3 text-sm font-semibold text-slate-300">ROUTES</h3>
               <RouteSelect
@@ -85,7 +63,7 @@ export default function LiveMap() {
           )}
 
           {/* Rail-only toggles */}
-          {tab === "rail" && (
+          {isRail && (
             <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
               <h3 className="mb-3 text-sm font-semibold text-slate-300">RAIL LINES</h3>
               <div className="grid grid-cols-2 gap-3">
@@ -145,17 +123,72 @@ export default function LiveMap() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; OpenStreetMap contributors'
               />
-              {tab === "bus" && (
+              {isBus && (
                 <BusMarkers
                   showStops={showStops}
                   route={selectedRoute ? selectedRoute.id : null}
                 />
               )}
-              {tab === "rail" && <RailLinesOverlay visible={visibleRail} />}
+              {isRail && <RailLinesOverlay visible={visibleRail} />}
             </MapContainer>
           </div>
         </section>
       </div>
+    );
+  };
+
+  return (
+    <div className="mx-auto w-full max-w-[1400px] px-4 lg:px-6">
+      {/* Top tabs for Bus/Rail inside Live Map */}
+      <div
+        className="inline-flex items-center gap-3"
+        role="tablist"
+        aria-label="Live Map Mode"
+      >
+        <button
+          id="live-map-bus-tab"
+          role="tab"
+          aria-selected={mode === "bus"}
+          aria-controls="live-map-bus-panel"
+          className={
+            "px-6 py-2 rounded-2xl font-semibold transition-colors shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 " +
+            (mode === "bus"
+              ? "bg-indigo-600 text-white"
+              : "bg-slate-800 text-slate-300 hover:bg-slate-700")
+          }
+          onClick={() => setMode("bus")}
+        >
+          Bus
+        </button>
+
+        <button
+          id="live-map-rail-tab"
+          role="tab"
+          aria-selected={mode === "rail"}
+          aria-controls="live-map-rail-panel"
+          className={
+            "px-6 py-2 rounded-2xl font-semibold transition-colors shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 " +
+            (mode === "rail"
+              ? "bg-indigo-600 text-white"
+              : "bg-slate-800 text-slate-300 hover:bg-slate-700")
+          }
+          onClick={() => setMode("rail")}
+        >
+          Rail
+        </button>
+      </div>
+
+      {(["bus", "rail"] as Mode[]).map((panelMode) => (
+        <div
+          key={panelMode}
+          id={`live-map-${panelMode}-panel`}
+          role="tabpanel"
+          aria-labelledby={`live-map-${panelMode}-tab`}
+          hidden={mode !== panelMode}
+        >
+          {renderPanelContent(panelMode)}
+        </div>
+      ))}
     </div>
   );
 }
