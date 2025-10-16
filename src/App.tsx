@@ -1,10 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import FiltersPanel from "@/components/FiltersPanel";
 import TopNav from "@/components/TopNav";
-import LiveMap from "@/pages/LiveMap";
+import LiveMapPage from "@/pages/LiveMap";
 import Performance from "@/pages/Performance";
-import RailMapPage from "@/pages/RailMap";
+import RailPage from "@/pages/Rail";
 
 export default function App() {
   return (
@@ -12,17 +11,9 @@ export default function App() {
       <TopNav />
       <main className="mx-auto max-w-7xl px-5 pb-10">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="grid gap-6 py-6 lg:grid-cols-[320px,1fr]">
-                <FiltersPanel />
-                <LiveMap />
-              </div>
-            }
-          />
+          <Route path="/" element={<LiveMapPage />} />
           <Route path="/performance" element={<Performance />} />
-          <Route path="/rail" element={<RailMapPage />} />
+          <Route path="/rail" element={<RailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
