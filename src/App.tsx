@@ -4,7 +4,7 @@ import FiltersPanel from "@/components/FiltersPanel";
 import TopNav from "@/components/TopNav";
 import LiveMap from "@/pages/LiveMap";
 import Performance from "@/pages/Performance";
-import Rail from "@/pages/Rail";
+import RailMapPage from "@/pages/RailMap";
 
 export default function App() {
   return (
@@ -22,7 +22,7 @@ export default function App() {
             }
           />
           <Route path="/performance" element={<Performance />} />
-          <Route path="/rail" element={<Rail />} />
+          <Route path="/rail" element={<RailMapPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
