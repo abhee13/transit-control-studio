@@ -1,5 +1,6 @@
-import LiveMap from "@/pages/LiveMap";
+import LiveMap from "./LiveMap";
 
 export default function RailPage() {
-  return <LiveMap initialMode="rail" />;
+  // Reuse the Live Map; the in-page Bus/Rail tabs control the overlays.
+  return <LiveMap />;
 }
