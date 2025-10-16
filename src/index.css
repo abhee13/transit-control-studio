@@ -8,12 +8,11 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-white;
-    background-image: radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 55%),
-      radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.18), transparent 60%),
-      radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.15), transparent 60%),
-      radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.12), transparent 55%);
-    min-height: 100vh;
+    @apply min-h-screen text-slate-100;
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(67,56,202,.35) 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 120%, rgba(14,165,233,.25) 0%, transparent 55%),
+      linear-gradient(to bottom right, theme(colors.night.bgFrom), theme(colors.night.bgTo));
   }
 
   #root {
@@ -23,15 +22,24 @@
 
 @layer components {
   .card {
-    @apply rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-lg shadow-[0_25px_60px_rgba(8,15,44,0.45)];
+    @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_25px_60px_rgba(8,15,44,0.45)];
   }
 
   .chip {
-    @apply inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-xs text-white/80;
+    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80;
   }
 
   .glass {
-    @apply border border-white/10 bg-white/[0.08] backdrop-blur-lg shadow-[0_10px_30px_rgba(8,15,44,0.35)];
+    backdrop-filter: saturate(140%) blur(18px);
+    background: theme(colors.night.card);
+    border: 1px solid theme(colors.night.border);
+  }
+
+  .btn-ghost {
+    @apply rounded-xl px-3 py-2 text-sm transition hover:shadow-glow;
+    backdrop-filter: saturate(140%) blur(18px);
+    background: theme(colors.night.card);
+    border: 1px solid theme(colors.night.border);
   }
 
   .title-lg {
