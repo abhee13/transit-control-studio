@@ -48,3 +48,8 @@
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 8px;
 }
+
+/* Layering fixes so dropdowns sit above the map */
+.leaflet-container { z-index: 0; }
+.dropdown-surface { z-index: 1000; }
+.panel-surface { position: relative; overflow: visible; z-index: 10; }

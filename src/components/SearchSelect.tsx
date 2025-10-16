@@ -77,7 +77,7 @@ export default function SearchSelect({
         }}
         onFocus={() => setOpen(true)}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/40 outline-none focus:border-primary-500/50"
+        className="w-full rounded-lg bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
         aria-expanded={open}
         aria-haspopup="listbox"
       />
@@ -85,7 +85,7 @@ export default function SearchSelect({
       {open && (
         <div
           role="listbox"
-          className="card absolute z-20 mt-2 w-full overflow-auto p-2"
+          className="dropdown-surface absolute left-0 right-0 top-full mt-2 rounded-lg bg-[#111827] ring-1 ring-white/10 shadow-xl max-h-72 overflow-auto p-2"
           style={{ maxHeight }}
         >
           {filtered.length === 0 && <div className="px-3 py-2 text-sm text-white/60">No matches</div>}
