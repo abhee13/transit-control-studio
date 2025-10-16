@@ -19,7 +19,7 @@ export default function StatChip({
       : "text-white/70 bg-white/10";
 
   return (
-    <div className="rounded-xl bg-white/5 ring-1 ring-white/10 p-3 flex items-center justify-between">
+    <div className="glass rounded-xl p-3 flex items-center justify-between">
       <div className="text-white/60 text-xs tracking-wide">{label}</div>
       <div className="flex items-center gap-2">
         <div className="text-lg font-semibold text-white">{value}</div>

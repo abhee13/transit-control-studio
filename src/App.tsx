@@ -7,9 +7,9 @@ import RailPage from "@/pages/Rail";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen">
       <TopNav />
-      <main className="mx-auto max-w-7xl px-5 pb-10">
+      <main className="mx-auto w-full max-w-7xl px-5 pb-10">
         <Routes>
           <Route path="/" element={<LiveMapPage />} />
           <Route path="/performance" element={<Performance />} />
