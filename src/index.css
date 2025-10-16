@@ -53,3 +53,5 @@
 .leaflet-container { z-index: 0; }
 .dropdown-surface { z-index: 1000; }
 .panel-surface { position: relative; overflow: visible; z-index: 10; }
+.leaflet-container, .leaflet-pane, .leaflet-map-pane { will-change: transform; }
+.leaflet-container { height: 100%; width: 100%; }
