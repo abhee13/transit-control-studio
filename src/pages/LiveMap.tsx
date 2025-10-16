@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import type { ComponentType } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -9,13 +8,7 @@ import StatsCards from "@/components/StatsCards";
 import { polylines, routes, vehicles } from "@/data/mock";
 import { useAppStore } from "@/store/useAppStore";
 
-const DALLAS: [number, number] = [32.7767, -96.797];
-
-const Map = MapContainer as ComponentType<any>;
-const Tile = TileLayer as ComponentType<any>;
-const PolylineLayer = Polyline as ComponentType<any>;
-const Marker = CircleMarker as ComponentType<any>;
-const TooltipLayer = Tooltip as ComponentType<any>;
+const DALLAS: [number, number] = [32.7769, -96.797];
 
 function statusColor(status: string) {
   switch (status) {
@@ -54,21 +47,20 @@ export default function LiveMap() {
       title="Live Network Map"
       left={<FiltersPanel />}
       center={
-        <div className="relative rounded-xl shadow-xl overflow-hidden z-0">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/0 to-black/5" />
-          <Map center={DALLAS} zoom={12} style={{ height: 520, width: "100%" }}>
-            <Tile attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <div className="rounded-xl shadow-xl overflow-hidden z-0">
+          <MapContainer center={DALLAS} zoom={12} className="h-[72vh] w-full">
+            <TileLayer attribution="&copy; OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {visiblePolylines.map((polyline, index) => (
-              <PolylineLayer key={index} positions={polyline.points} pathOptions={{ color: "#38bdf8", weight: 3, opacity: 0.5 }} />
+              <Polyline key={index} positions={polyline.points} pathOptions={{ color: "#38bdf8", weight: 3, opacity: 0.5 }} />
             ))}
             {visibleVehicles.map((vehicle) => (
-              <Marker
+              <CircleMarker
                 key={vehicle.id}
                 center={[vehicle.lat, vehicle.lng]}
                 radius={7}
                 pathOptions={{ color: statusColor(vehicle.status), fillOpacity: 0.9 }}
               >
-                <TooltipLayer direction="top" offset={[0, -8]}>
+                <Tooltip direction="top" offset={[0, -8]}>
                   <div className="text-xs">
                     <div>
                       <strong>{vehicle.label}</strong> • {vehicle.routeShort}
@@ -76,10 +68,10 @@ export default function LiveMap() {
                     <div>Status: {vehicle.status}</div>
                     <div>Last seen {vehicle.lastSeen}m ago</div>
                   </div>
-                </TooltipLayer>
-              </Marker>
+                </Tooltip>
+              </CircleMarker>
             ))}
-          </Map>
+          </MapContainer>
         </div>
       }
       right={<StatsCards vehicles={visibleVehicles} />}
