@@ -4,14 +4,22 @@ import "leaflet/dist/leaflet.css";
 import { BusMarkers } from "../widgets/BusMarkers";
 import { RailLinesOverlay, RAIL_LINES, RailLineKey } from "../widgets/RailLinesOverlay";
 import { KpiCard } from "../widgets/KpiCard";
-import { RouteCombobox } from "../widgets/RouteCombobox";
+import RouteSelect from "../widgets/RouteSelect";
+import { BUS_ROUTES as BUS_ROUTE_DATA } from "../data/routes";
+
+const BUS_ROUTE_OPTIONS = BUS_ROUTE_DATA.map(({ number, name }) => ({
+  id: number,
+  label: name,
+}));
+
+type RouteOption = (typeof BUS_ROUTE_OPTIONS)[number];
 
 type Tab = "bus" | "rail";
 
 export default function LiveMap() {
   const [tab, setTab] = useState<Tab>("bus");
   const [showStops, setShowStops] = useState(true);
-  const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState<RouteOption | null>(null);
   const [visibleRail, setVisibleRail] = useState<Record<RailLineKey, boolean>>({
     green: true,
     blue: true,
@@ -55,11 +63,13 @@ export default function LiveMap() {
         <aside className="space-y-4">
           {/* Bus-only filter */}
           {tab === "bus" && (
-            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur">
+            <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
               <h3 className="mb-3 text-sm font-semibold text-slate-300">ROUTES</h3>
-              <RouteCombobox
+              <RouteSelect
+                routes={BUS_ROUTE_OPTIONS}
                 value={selectedRoute}
                 onChange={setSelectedRoute}
+                placeholder="Type a route number or name..."
               />
               <label className="mt-3 flex items-center gap-2 text-sm text-slate-300">
                 <input
@@ -76,7 +86,7 @@ export default function LiveMap() {
 
           {/* Rail-only toggles */}
           {tab === "rail" && (
-            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur">
+            <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
               <h3 className="mb-3 text-sm font-semibold text-slate-300">RAIL LINES</h3>
               <div className="grid grid-cols-2 gap-3">
                 {RAIL_LINES.map((l) => {
@@ -135,7 +145,12 @@ export default function LiveMap() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; OpenStreetMap contributors'
               />
-              {tab === "bus" && <BusMarkers showStops={showStops} route={selectedRoute} />}
+              {tab === "bus" && (
+                <BusMarkers
+                  showStops={showStops}
+                  route={selectedRoute ? selectedRoute.id : null}
+                />
+              )}
               {tab === "rail" && <RailLinesOverlay visible={visibleRail} />}
             </MapContainer>
           </div>
