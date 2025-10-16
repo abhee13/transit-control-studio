@@ -1,6 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { CircleMarker, Tooltip as LeafletTooltip } from "react-leaflet";
-import type { LatLngExpression, PointExpression } from "leaflet";
+import type { LatLngExpression } from "leaflet";
 
 // Demo data – keep/replace with your real feed
 const BUS_POINTS: Array<{
@@ -24,7 +24,8 @@ export function BusMarkers({
     return BUS_POINTS;
   }, [route]);
 
-  const tooltipOffset = [0, 8] as PointExpression;
+  // Using tuple type to avoid PointExpression import (not present in your leaflet types)
+  const tooltipOffset: [number, number] = [0, 8];
 
   return (
     <Fragment>

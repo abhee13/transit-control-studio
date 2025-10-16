@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { Polyline, Tooltip as LeafletTooltip } from "react-leaflet";
-import type { LatLngExpression, PointExpression } from "leaflet";
+import type { LatLngExpression } from "leaflet";
 
 export type RailLineKey = "green" | "blue" | "red" | "orange" | "silver";
 
@@ -22,7 +22,8 @@ export function RailLinesOverlay({
 }: {
   visible: Record<RailLineKey, boolean>;
 }) {
-  const tooltipOffset = [0, 8] as PointExpression;
+  // Using tuple type to avoid PointExpression import
+  const tooltipOffset: [number, number] = [0, 8];
 
   return (
     <Fragment>
