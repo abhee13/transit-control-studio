@@ -1,2 +1,35 @@
-import React from "react"; import { useAppStore } from "../store/useAppStore"; import { routes } from "../data/mock";
-export default function FiltersPanel(){ const {selectedRoutes,toggleRoute,showStops,setShowStops}=useAppStore(); return (<div className="space-y-6"><div><p className="text-xs uppercase tracking-wide text-ink-600 mb-2">Routes</p><div className="flex flex-wrap gap-2">{routes.map(r=>(<button key={r.id} onClick={()=>toggleRoute(r.id)} className={`px-3 py-1.5 rounded-full text-sm border transition ${selectedRoutes.includes(r.id)?"bg-ink-900 text-white border-ink-900":"bg-white border-ink-200 hover:bg-ink-100"}`} aria-pressed={selectedRoutes.includes(r.id)}>{r.shortName}</button>))}</div></div><div className="border-t border-ink-200 pt-4"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={showStops} onChange={e=>setShowStops(e.target.checked)} /> Show stops</label></div><div className="text-xs text-ink-600">UI only demo with mock data</div></div>); }
+import SearchSelect from "@/components/SearchSelect";
+import Panel from "@/components/Panel";
+import { useAppStore } from "@/store/useAppStore";
+
+export default function FiltersPanel() {
+  const { busRoutes, selectedRoutes, setSelectedRoutes, showStops, setShowStops } = useAppStore();
+  const options = busRoutes.map((route) => ({
+    id: route.id,
+    label: `${route.number} — ${route.name}`,
+    sub: route.id,
+  }));
+
+  return (
+    <Panel title="Routes">
+      <div className="space-y-4">
+        <SearchSelect
+          options={options}
+          value={selectedRoutes}
+          onChange={setSelectedRoutes}
+          placeholder="Type a route number or name…"
+        />
+        <label className="flex items-center gap-3 text-sm text-white/70">
+          <input
+            type="checkbox"
+            checked={showStops}
+            onChange={(event) => setShowStops(event.target.checked)}
+            className="h-4 w-4 rounded border-white/30 bg-white/10 text-primary-400 focus:ring-primary-400"
+          />
+          Show stops
+        </label>
+        <p className="text-xs text-white/50">UI only demo with mock data</p>
+      </div>
+    </Panel>
+  );
+}

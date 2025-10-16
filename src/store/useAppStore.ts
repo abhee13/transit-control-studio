@@ -1,3 +1,27 @@
 import { create } from "zustand";
-type State={mode:"bus"|"rail";selectedRoutes:string[];showStops:boolean}; type Actions={setMode:(m:"bus"|"rail")=>void;toggleRoute:(id:string)=>void;setShowStops:(v:boolean)=>void};
-export const useAppStore=create<State & Actions>(set=>({mode:"bus",selectedRoutes:[],showStops:true,setMode:m=>set({mode:m}),toggleRoute:id=>set(s=>({selectedRoutes:s.selectedRoutes.includes(id)?s.selectedRoutes.filter(r=>r!==id):[...s.selectedRoutes,id]})),setShowStops:v=>set({showStops:v})}));
+import { BUS_ROUTES } from "@/data/routes";
+
+type Mode = "bus" | "rail";
+
+type State = {
+  mode: Mode;
+  busRoutes: typeof BUS_ROUTES;
+  selectedRoutes: string[];
+  showStops: boolean;
+};
+
+type Actions = {
+  setMode: (mode: Mode) => void;
+  setSelectedRoutes: (ids: string[]) => void;
+  setShowStops: (value: boolean) => void;
+};
+
+export const useAppStore = create<State & Actions>((set) => ({
+  mode: "bus",
+  busRoutes: BUS_ROUTES,
+  selectedRoutes: [],
+  showStops: true,
+  setMode: (mode) => set({ mode }),
+  setSelectedRoutes: (ids) => set({ selectedRoutes: ids }),
+  setShowStops: (value) => set({ showStops: value }),
+}));

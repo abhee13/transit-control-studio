@@ -1,3 +1,21 @@
-import React from "react"; import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line, Legend } from "recharts";
-export function AreaCard({title,data,xKey,yKey}:{title:string;data:any[];xKey:string;yKey:string;}){ return (<div className="rounded-2xl bg-white border border-ink-200 p-4 shadow-soft"><div className="text-sm font-medium mb-2">{title}</div><div className="h-48"><ResponsiveContainer width="100%" height="100%"><AreaChart data={data}><defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopOpacity={.3}/><stop offset="95%" stopOpacity={0}/></linearGradient></defs><XAxis dataKey={xKey}/><YAxis/><CartesianGrid strokeDasharray="3 3"/><Tooltip/><Area type="monotone" dataKey={yKey} fillOpacity={.2} fill="url(#grad)"/></AreaChart></ResponsiveContainer></div></div>); }
-export function LineCard({title,data,series}:{title:string;data:any[];series:{key:string;name:string;}[];}){ return (<div className="rounded-2xl bg-white border border-ink-200 p-4 shadow-soft"><div className="text-sm font-medium mb-2">{title}</div><div className="h-56"><ResponsiveContainer width="100%" height="100%"><LineChart data={data}><CartesianGrid strokeDasharray="3 3"/><XAxis dataKey="t"/><YAxis/><Tooltip/><Legend/>{series.map(s=>(<Line key={s.key} type="monotone" dataKey={s.key} name={s.name} dot={false}/>))}</LineChart></ResponsiveContainer></div></div>); }
+import React from "react";
+
+export default function ChartCard({
+  title,
+  children,
+  right,
+}: {
+  title: string;
+  children: React.ReactNode;
+  right?: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-white text-sm font-medium">{title}</h3>
+        {right}
+      </div>
+      {children}
+    </div>
+  );
+}

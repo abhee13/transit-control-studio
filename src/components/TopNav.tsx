@@ -1,2 +1,67 @@
-import React from "react"; import { useAppStore } from "../store/useAppStore"; import { Link } from "react-router-dom";
-export default function TopNav(){ const {mode,setMode}=useAppStore(); return (<header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-ink-200"><div className="mx-auto max-w-full px-4 md:px-6 lg:px-8 py-3 flex items-center justify-between"><Link to="/" className="font-semibold tracking-tight text-ink-900">Live Operations</Link><div className="inline-flex items-center rounded-full border border-ink-200 p-1 bg-ink-100" role="tablist" aria-label="Mode">{(["bus","rail"] as const).map(v=>(<button key={v} onClick={()=>setMode(v)} className={`px-3 py-1.5 text-sm rounded-full transition ${mode===v?"bg-white shadow-soft":"opacity-70 hover:opacity-100"}`} aria-pressed={mode===v}>{v[0].toUpperCase()+v.slice(1)}</button>))}</div></div></header>); }
+import { Link, NavLink } from "react-router-dom";
+import { useAppStore } from "@/store/useAppStore";
+
+export default function TopNav() {
+  const { setMode } = useAppStore();
+
+  return (
+    <header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/70 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center gap-6 px-5 py-4">
+        <Link to="/" className="text-lg font-semibold tracking-tight text-white">
+          Transit Control Studio
+        </Link>
+        <nav className="flex items-center gap-3 text-sm text-white/60">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `hover:text-white ${isActive ? "text-white" : ""}`
+            }
+            onClick={() => setMode("bus")}
+          >
+            Live Map
+          </NavLink>
+          <NavLink
+            to="/performance"
+            className={({ isActive }) =>
+              `hover:text-white ${isActive ? "text-white" : ""}`
+            }
+          >
+            Performance
+          </NavLink>
+        </nav>
+        <div className="ml-auto flex items-center gap-2">
+          <div className="glass rounded-full p-1 flex">
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                `px-3 py-1 rounded-full text-sm ${
+                  isActive
+                    ? "bg-primary-500/25 text-primary-100"
+                    : "text-white/70 hover:text-white"
+                }`
+              }
+              onClick={() => setMode("bus")}
+            >
+              Bus
+            </NavLink>
+            <NavLink
+              to="/rail"
+              className={({ isActive }) =>
+                `px-3 py-1 rounded-full text-sm ${
+                  isActive
+                    ? "bg-primary-500/25 text-primary-100"
+                    : "text-white/70 hover:text-white"
+                }`
+              }
+              onClick={() => setMode("rail")}
+            >
+              Rail
+            </NavLink>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
