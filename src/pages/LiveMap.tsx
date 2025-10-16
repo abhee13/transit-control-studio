@@ -1,4 +1,113 @@
-import React from "react"; import { MapContainer, TileLayer, CircleMarker, Tooltip, Polyline } from "react-leaflet"; import "leaflet/dist/leaflet.css"; import { useAppStore } from "../store/useAppStore"; import { vehicles, routes, polylines } from "../data/mock";
-const DALLAS:[number,number]=[32.7767,-96.7970];
-function statusColor(s:string){return s==="on-time"?"#16a34a":s==="late"?"#f59e0b":s==="off-route"?"#ef4444":"#2f80ed";}
-export default function LiveMap(){ const {selectedRoutes,mode}=useAppStore(); const activeRoutes=selectedRoutes.length?selectedRoutes:routes.filter(r=>r.mode===mode).map(r=>r.id); const visible=vehicles.filter(v=>activeRoutes.includes(v.routeId)&&v.mode===mode); return (<div className="grid grid-cols-1 xl:grid-cols-4 gap-4"><div className="xl:col-span-3 rounded-2xl overflow-hidden border border-ink-200 shadow-soft bg-white"><MapContainer center={DALLAS} zoom={12} style={{height:600,width:"100%"}}><TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>{polylines.filter(p=>activeRoutes.includes(p.routeId)).map((p,idx)=>(<Polyline key={idx} positions={p.points} pathOptions={{color:"#6b7280",weight:3,opacity:.6}}/>))}{visible.map(v=>(<CircleMarker key={v.id} center={[v.lat,v.lng]} radius={7} pathOptions={{color:statusColor(v.status),fillOpacity:.9}}><Tooltip direction="top" offset={[0,-8]}><div className="text-xs"><div><b>{v.label}</b> • {v.routeShort}</div><div>Status: {v.status}</div><div>Last seen {v.lastSeen}m ago</div></div></Tooltip></CircleMarker>))}</MapContainer></div><div className="space-y-4"><div className="rounded-2xl bg-white border border-ink-200 p-4 shadow-soft"><h3 className="text-sm font-medium mb-2">Real Time Stats</h3><ul className="text-sm space-y-1"><li className="flex items-center justify-between"><span>Active vehicles</span><b>{visible.length}</b></li><li className="flex items-center justify-between"><span>On time</span><b className="text-success">{visible.filter(v=>v.status==="on-time").length}</b></li><li className="flex items-center justify-between"><span>Late</span><b className="text-warn">{visible.filter(v=>v.status==="late").length}</b></li><li className="flex items-center justify-between"><span>Off route</span><b className="text-danger">{visible.filter(v=>v.status==="off-route").length}</b></li></ul></div></div></div>); }
+import { useEffect } from "react";
+import type { ComponentType } from "react";
+import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+
+import Panel from "@/components/Panel";
+import { polylines, routes, vehicles } from "@/data/mock";
+import { useAppStore } from "@/store/useAppStore";
+
+const DALLAS: [number, number] = [32.7767, -96.797];
+
+const Map = MapContainer as ComponentType<any>;
+const Tile = TileLayer as ComponentType<any>;
+const PolylineLayer = Polyline as ComponentType<any>;
+const Marker = CircleMarker as ComponentType<any>;
+const TooltipLayer = Tooltip as ComponentType<any>;
+
+function statusColor(status: string) {
+  switch (status) {
+    case "on-time":
+      return "#22c55e";
+    case "late":
+      return "#f97316";
+    case "off-route":
+      return "#ef4444";
+    default:
+      return "#38bdf8";
+  }
+}
+
+export default function LiveMap() {
+  const { selectedRoutes, mode, setMode } = useAppStore();
+
+  useEffect(() => {
+    setMode("bus");
+  }, [setMode]);
+
+  const fallbackRoutes = routes.filter((route) => route.mode === mode).map((route) => route.shortName);
+  const activeRouteShortNames = selectedRoutes.length ? selectedRoutes : fallbackRoutes;
+
+  const visibleVehicles = vehicles.filter(
+    (vehicle) => vehicle.mode === mode && activeRouteShortNames.includes(vehicle.routeShort)
+  );
+
+  const visiblePolylines = polylines.filter((polyline) => {
+    const matchedRoute = routes.find((route) => route.id === polyline.routeId);
+    return matchedRoute ? activeRouteShortNames.includes(matchedRoute.shortName) && matchedRoute.mode === mode : false;
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="title-lg">Live Network Map</h1>
+        <p className="text-sm text-white/60">
+          Track vehicles and service levels across the system in real time.
+        </p>
+      </div>
+
+      <div className="card space-y-4 p-4 lg:p-6">
+        <div className="rounded-2xl overflow-hidden relative">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/0 to-black/5" />
+          <Map center={DALLAS} zoom={12} style={{ height: 520, width: "100%" }}>
+            <Tile attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {visiblePolylines.map((polyline, index) => (
+              <PolylineLayer key={index} positions={polyline.points} pathOptions={{ color: "#38bdf8", weight: 3, opacity: 0.5 }} />
+            ))}
+            {visibleVehicles.map((vehicle) => (
+              <Marker
+                key={vehicle.id}
+                center={[vehicle.lat, vehicle.lng]}
+                radius={7}
+                pathOptions={{ color: statusColor(vehicle.status), fillOpacity: 0.9 }}
+              >
+                <TooltipLayer direction="top" offset={[0, -8]}>
+                  <div className="text-xs">
+                    <div>
+                      <strong>{vehicle.label}</strong> • {vehicle.routeShort}
+                    </div>
+                    <div>Status: {vehicle.status}</div>
+                    <div>Last seen {vehicle.lastSeen}m ago</div>
+                  </div>
+                </TooltipLayer>
+              </Marker>
+            ))}
+          </Map>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <Panel title="Active vehicles" action={<span className="text-lg font-semibold text-white">{visibleVehicles.length}</span>}>
+            <p>Vehicles currently tracking on selected routes.</p>
+          </Panel>
+          <Panel title="On time">
+            <p className="text-2xl font-semibold text-emerald-300">
+              {visibleVehicles.filter((vehicle) => vehicle.status === "on-time").length}
+            </p>
+            <p>Vehicles meeting schedule expectations.</p>
+          </Panel>
+          <Panel title="Late">
+            <p className="text-2xl font-semibold text-amber-300">
+              {visibleVehicles.filter((vehicle) => vehicle.status === "late").length}
+            </p>
+            <p>Requires attention to improve headways.</p>
+          </Panel>
+          <Panel title="Off route">
+            <p className="text-2xl font-semibold text-rose-300">
+              {visibleVehicles.filter((vehicle) => vehicle.status === "off-route").length}
+            </p>
+            <p>Investigate diversions or disruptions.</p>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
