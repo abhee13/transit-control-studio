@@ -1,5 +1,13 @@
 import { useEffect } from "react";
-import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
+import type { CircleMarkerProps, TooltipProps } from "react-leaflet";
+import type { LatLngExpression, LatLngTuple } from "leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  CircleMarker,
+  Polyline,
+  Tooltip as LeafletTooltip,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import PageShell from "@/components/PageShell";
@@ -8,7 +16,7 @@ import StatsCards from "@/components/StatsCards";
 import { polylines, routes, vehicles } from "@/data/mock";
 import { useAppStore } from "@/store/useAppStore";
 
-const DALLAS: [number, number] = [32.7769, -96.797];
+const DALLAS: LatLngExpression = [32.7769, -96.797];
 
 function statusColor(status: string) {
   switch (status) {
@@ -51,26 +59,39 @@ export default function LiveMap() {
           <MapContainer center={DALLAS} zoom={12} className="h-[72vh] w-full">
             <TileLayer attribution="&copy; OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {visiblePolylines.map((polyline, index) => (
-              <Polyline key={index} positions={polyline.points} pathOptions={{ color: "#38bdf8", weight: 3, opacity: 0.5 }} />
+              <Polyline
+                key={index}
+                positions={polyline.points as LatLngTuple[]}
+                pathOptions={{ color: "#38bdf8", weight: 3, opacity: 0.5 }}
+              />
             ))}
-            {visibleVehicles.map((vehicle) => (
-              <CircleMarker
-                key={vehicle.id}
-                center={[vehicle.lat, vehicle.lng]}
-                radius={7}
-                pathOptions={{ color: statusColor(vehicle.status), fillOpacity: 0.9 }}
-              >
-                <Tooltip direction="top" offset={[0, -8]}>
-                  <div className="text-xs">
-                    <div>
-                      <strong>{vehicle.label}</strong> • {vehicle.routeShort}
+            {visibleVehicles.map((vehicle) => {
+              const markerCenter = [vehicle.lat, vehicle.lng] as LatLngTuple;
+              const markerProps: CircleMarkerProps = {
+                center: markerCenter,
+                radius: 7,
+                pathOptions: { color: statusColor(vehicle.status), fillOpacity: 0.9 },
+              };
+              const tooltipProps: TooltipProps = {
+                direction: "top",
+                offset: [0, -8] as [number, number],
+                opacity: 1,
+              };
+
+              return (
+                <CircleMarker key={vehicle.id} {...markerProps}>
+                  <LeafletTooltip {...tooltipProps}>
+                    <div className="text-xs">
+                      <div>
+                        <strong>{vehicle.label}</strong> • {vehicle.routeShort}
+                      </div>
+                      <div>Status: {vehicle.status}</div>
+                      <div>Last seen {vehicle.lastSeen}m ago</div>
                     </div>
-                    <div>Status: {vehicle.status}</div>
-                    <div>Last seen {vehicle.lastSeen}m ago</div>
-                  </div>
-                </Tooltip>
-              </CircleMarker>
-            ))}
+                  </LeafletTooltip>
+                </CircleMarker>
+              );
+            })}
           </MapContainer>
         </div>
       }
