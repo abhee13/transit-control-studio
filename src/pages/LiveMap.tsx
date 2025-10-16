@@ -3,7 +3,9 @@ import type { ComponentType } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import Panel from "@/components/Panel";
+import PageShell from "@/components/PageShell";
+import FiltersPanel from "@/components/FiltersPanel";
+import StatsCards from "@/components/StatsCards";
 import { polylines, routes, vehicles } from "@/data/mock";
 import { useAppStore } from "@/store/useAppStore";
 
@@ -48,16 +50,11 @@ export default function LiveMap() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="title-lg">Live Network Map</h1>
-        <p className="text-sm text-white/60">
-          Track vehicles and service levels across the system in real time.
-        </p>
-      </div>
-
-      <div className="card space-y-4 p-4 lg:p-6">
-        <div className="rounded-2xl overflow-hidden relative">
+    <PageShell
+      title="Live Network Map"
+      left={<FiltersPanel />}
+      center={
+        <div className="relative rounded-xl shadow-xl overflow-hidden z-0">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/0 to-black/5" />
           <Map center={DALLAS} zoom={12} style={{ height: 520, width: "100%" }}>
             <Tile attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -84,30 +81,8 @@ export default function LiveMap() {
             ))}
           </Map>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Panel title="Active vehicles" action={<span className="text-lg font-semibold text-white">{visibleVehicles.length}</span>}>
-            <p>Vehicles currently tracking on selected routes.</p>
-          </Panel>
-          <Panel title="On time">
-            <p className="text-2xl font-semibold text-emerald-300">
-              {visibleVehicles.filter((vehicle) => vehicle.status === "on-time").length}
-            </p>
-            <p>Vehicles meeting schedule expectations.</p>
-          </Panel>
-          <Panel title="Late">
-            <p className="text-2xl font-semibold text-amber-300">
-              {visibleVehicles.filter((vehicle) => vehicle.status === "late").length}
-            </p>
-            <p>Requires attention to improve headways.</p>
-          </Panel>
-          <Panel title="Off route">
-            <p className="text-2xl font-semibold text-rose-300">
-              {visibleVehicles.filter((vehicle) => vehicle.status === "off-route").length}
-            </p>
-            <p>Investigate diversions or disruptions.</p>
-          </Panel>
-        </div>
-      </div>
-    </div>
+      }
+      right={<StatsCards vehicles={visibleVehicles} />}
+    />
   );
 }
