@@ -37,6 +37,7 @@ export default function LiveMap(): JSX.Element {
     return () => window.removeEventListener("resize", onResize);
   }, []);
   const panelAndMapHeight = useMemo(() => Math.max(640, vh - HEADER_OFFSET), [vh]);
+  void panelAndMapHeight;
 
   return (
     <main className="w-full max-w-[1600px] mx-auto px-4 md:px-6 pt-6 pb-10">
@@ -71,11 +72,19 @@ export default function LiveMap(): JSX.Element {
       </div>
 
       {/* Left panel + Map */}
-      <section className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] items-start">
+      <section className="grid gap-10 lg:grid-cols-[380px_minmax(0,1fr)]">
         {/* LEFT PANEL */}
         <aside
-          className="sticky top-24 h-[calc(100vh-160px)] overflow-y-auto overflow-x-visible rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] p-6 space-y-6"
-          style={{ height: panelAndMapHeight }}
+          className={`
+  rounded-2xl
+  border border-white/10
+  bg-white/5
+  backdrop-blur-xl
+  shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)]
+  p-6
+  space-y-6
+  overflow-visible
+`}
         >
           {mode === "bus" ? (
             <>
@@ -186,14 +195,16 @@ export default function LiveMap(): JSX.Element {
         {/* MAP */}
         <div
           id="map-shell"
-          className="rounded-2xl border border-white/10 overflow-hidden shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] bg-white/5 h-[calc(100vh-160px)]"
-          style={{ height: panelAndMapHeight }}
+          className="rounded-2xl border border-white/10 overflow-hidden shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.06)]"
         >
           <MapContainer
             center={[32.7767, -96.797]} // Dallas
             zoom={12}
             scrollWheelZoom
-            style={{ height: "100%", width: "100%" }}
+            className={`
+  h-[780px]
+  w-full
+`}
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -216,7 +227,15 @@ function KpiCard(props: {
 }): JSX.Element {
   const { title, value, subtitle } = props;
   return (
-    <div className="rounded-xl border border-white/10 bg-white/3 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.06)] kpi-card">
+    <div
+      className={`
+  rounded-xl
+  border border-white/10
+  bg-white/3
+  p-5
+  shadow-[inset_0_1px_0_rgba(255,255,255,.06)]
+`}
+    >
       <p className="text-xs tracking-wide text-white/60">{title}</p>
       <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
       <p className="mt-2 text-sm text-white/60">{subtitle}</p>
