@@ -1,0 +1,27 @@
+.map-legend{
+  background: rgba(10,16,24,.78);
+  color: #cbd5e1;
+  border: 1px solid rgba(148,163,184,.18);
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  font: 500 12px/1.2 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+.legend-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:4px 2px;
+  white-space:nowrap;
+}
+.legend-dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  display:inline-block;
+  box-shadow:0 0 0 2px rgba(0,0,0,.35) inset;
+}
+.legend-dot.ontime  { background:#10e0b1; }
+.legend-dot.delay   { background:#f59e0b; }
+.legend-dot.major   { background:#ef4444; }
+.legend-dot.offline { background:#94a3b8; }

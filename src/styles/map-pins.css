@@ -73,3 +73,22 @@
   background: transparent;
   border: 0;
 }
+
+/* Status-based Leaflet pins */
+.pin{
+  display:inline-grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  color:var(--pin-glyph, #08141a);
+  background:var(--pin-bg, #10e0b1);
+  box-shadow:0 0 0 2px var(--pin-ring, #063b38), 0 4px 18px rgba(0,0,0,.35);
+}
+
+.pin--bus { /* palette defined per status */ }
+
+.pin--bus.is-ontime  { --pin-bg:#10e0b1; --pin-ring:#063b38; --pin-glyph:#08141a; }
+.pin--bus.is-delay   { --pin-bg:#f59e0b; --pin-ring:#3b2506; --pin-glyph:#0b0b0b; }
+.pin--bus.is-major   { --pin-bg:#ef4444; --pin-ring:#3b0a0a; --pin-glyph:#0b0b0b; }
+.pin--bus.is-offline { --pin-bg:#94a3b8; --pin-ring:#1f2937; --pin-glyph:#0b0b0b; }
