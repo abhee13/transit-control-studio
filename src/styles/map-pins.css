@@ -84,6 +84,7 @@
   color:var(--pin-glyph, #08141a);
   background:var(--pin-bg, #10e0b1);
   box-shadow:0 0 0 2px var(--pin-ring, #063b38), 0 4px 18px rgba(0,0,0,.35);
+  position:relative;
 }
 
 .pin--bus { /* palette defined per status */ }
@@ -92,3 +93,34 @@
 .pin--bus.is-delay   { --pin-bg:#f59e0b; --pin-ring:#3b2506; --pin-glyph:#0b0b0b; }
 .pin--bus.is-major   { --pin-bg:#ef4444; --pin-ring:#3b0a0a; --pin-glyph:#0b0b0b; }
 .pin--bus.is-offline { --pin-bg:#94a3b8; --pin-ring:#1f2937; --pin-glyph:#0b0b0b; }
+
+/* Centered glyph when our HTML includes the span */
+.pin__inner{
+  display:grid;
+  place-items:center;
+  position:absolute;
+  inset:0;
+}
+
+.pin__glyph{
+  font-size:16px;
+  line-height:1;
+  color:var(--pin-glyph, #08141a);
+}
+
+/* Fallback: ensure legacy circle-only pins show a bus glyph. */
+.pin--bus:not(.pin--has-glyph)::before{
+  content:'directions_bus';
+  font-family:'Material Symbols Rounded';
+  font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:var(--pin-glyph, #08141a);
+  font-size:16px;
+}
+
+.pin--bus.pin--has-glyph::before{
+  content:none;
+}
