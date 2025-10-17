@@ -1,0 +1,44 @@
+/* Live Map – compact gutters so the map gets more room */
+
+:root {
+  /* page padding L/R and column gap scale sensibly with viewport */
+  --lm-gutter-x: clamp(12px, 2vw, 20px);
+  --lm-col-gap: clamp(12px, 1.6vw, 18px);
+  --lm-sidebar-w: clamp(320px, 22vw, 360px);
+}
+
+/* Reduce horizontal padding only on the Live Map page */
+.live-map-page .page-shell,
+.live-map-page .page-inner,
+.live-map-page .container,
+.live-map-page main {
+  padding-left: var(--lm-gutter-x) !important;
+  padding-right: var(--lm-gutter-x) !important;
+}
+
+/* Two-column area: sidebar + map */
+.live-map-grid {
+  display: grid;
+  grid-template-columns: var(--lm-sidebar-w) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--lm-col-gap);
+}
+
+/* Ensure the map column uses all its space */
+.live-map-grid .leaflet-container,
+.live-map-grid .map-card,
+.live-map-grid #map {
+  width: 100%;
+}
+
+/* Kill any stray extra left margin on the sidebar wrapper if present */
+.live-map-page .left-panel,
+.live-map-page .panel-stack {
+  margin-left: 0 !important;
+}
+
+/* Optional: tighten title spacing on this page only */
+.live-map-page .page-title {
+  margin-left: 0;
+  padding-left: 0;
+}
