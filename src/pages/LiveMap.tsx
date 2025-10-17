@@ -5,6 +5,8 @@ import "leaflet/dist/leaflet.css";
 
 import BusMarkers from "@/widgets/BusMarkers";
 import RailLinesOverlay from "@/widgets/RailLinesOverlay";
+import RouteSelect from "@/widgets/RouteSelect";
+import { BUS_ROUTES } from "@/data/routes";
 
 type Mode = "bus" | "rail";
 type RailLineKey = "green" | "blue" | "red" | "orange" | "silver";
@@ -15,7 +17,9 @@ export default function LiveMap(): JSX.Element {
   const [mode, setMode] = useState<Mode>("bus");
 
   // Bus controls
-  const [route, setRoute] = useState<string>("");
+  const [route, setRoute] = useState<{ id: string; label: string } | null>(
+    null
+  );
   const [showStops, setShowStops] = useState<boolean>(true);
 
   // Rail visibility toggles
@@ -38,6 +42,11 @@ export default function LiveMap(): JSX.Element {
   }, []);
   const panelAndMapHeight = useMemo(() => Math.max(640, vh - HEADER_OFFSET), [vh]);
   void panelAndMapHeight;
+
+  const routeOptions = useMemo(
+    () => BUS_ROUTES.map((r) => ({ id: r.id, label: r.name })),
+    []
+  );
 
   return (
     <main className="w-full max-w-[1600px] mx-auto px-4 md:px-6 pt-6 pb-10">
@@ -75,19 +84,19 @@ export default function LiveMap(): JSX.Element {
       <section className="grid gap-10 lg:grid-cols-[380px_minmax(0,1fr)]">
         {/* LEFT PANEL */}
         <aside
-          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] p-6 space-y-6 overflow-visible"
+          className="lm-side-panel rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] p-6 space-y-6"
+          data-ui="routes-panel"
         >
           {mode === "bus" ? (
             <>
               <h2 className="text-sm tracking-wide text-white/70 mb-3">ROUTES</h2>
 
-              <div className="mb-4 relative">
-                <input
-                  type="text"
+              <div className="mb-4">
+                <RouteSelect
+                  routes={routeOptions}
                   value={route}
-                  onChange={(e) => setRoute(e.target.value)}
+                  onChange={setRoute}
                   placeholder="Type a route number or name..."
-                  className="w-full rounded-xl bg-white/10 ring-1 ring-white/15 px-4 py-3 text-[0.95rem] text-white placeholder:text-white/50 outline-none focus:ring-2 focus:ring-indigo-500/70"
                 />
               </div>
 
@@ -199,7 +208,9 @@ export default function LiveMap(): JSX.Element {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            {mode === "bus" && <BusMarkers showStops={showStops} route={route} />}
+            {mode === "bus" && (
+              <BusMarkers showStops={showStops} route={route?.id ?? null} />
+            )}
             {mode === "rail" && <RailLinesOverlay visible={visible} />}
           </MapContainer>
         </div>

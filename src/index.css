@@ -59,8 +59,44 @@
   border-radius: 8px;
 }
 
+/* === LiveMap side-panel fixes === */
+.lm-side-panel,
+[data-ui="routes-panel"] {
+  background: rgba(9, 13, 24, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: saturate(130%) blur(6px);
+  overflow: visible !important;
+}
+
+.route-menu,
+[data-ui="route-menu"] {
+  position: absolute;
+  inset-inline: 0;
+  margin-top: 0.5rem;
+  max-height: 18rem;
+  overflow: auto;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 14, 25, 0.98);
+  z-index: 70;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.route-menu .item {
+  padding: 0.625rem 0.75rem;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.route-menu .item:hover,
+.route-menu .item[aria-selected="true"] {
+  background: rgba(88, 101, 242, 0.15);
+  color: #e5e7eb;
+}
+
 /* Layering fixes so dropdowns sit above the map */
-.leaflet-container { z-index: 0; }
+.leaflet-container { z-index: 10; }
 .dropdown-surface { z-index: 1000; }
 .panel-surface { position: relative; overflow: visible; z-index: 10; }
 .leaflet-container, .leaflet-pane, .leaflet-map-pane { will-change: transform; }
