@@ -75,16 +75,7 @@ export default function LiveMap(): JSX.Element {
       <section className="grid gap-10 lg:grid-cols-[380px_minmax(0,1fr)]">
         {/* LEFT PANEL */}
         <aside
-          className={`
-  rounded-2xl
-  border border-white/10
-  bg-white/5
-  backdrop-blur-xl
-  shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)]
-  p-6
-  space-y-6
-  overflow-visible
-`}
+          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] p-6 space-y-6 overflow-visible"
         >
           {mode === "bus" ? (
             <>
@@ -201,10 +192,7 @@ export default function LiveMap(): JSX.Element {
             center={[32.7767, -96.797]} // Dallas
             zoom={12}
             scrollWheelZoom
-            className={`
-  h-[780px]
-  w-full
-`}
+            className="w-full h-[720px] md:h-[800px]"
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -227,15 +215,7 @@ function KpiCard(props: {
 }): JSX.Element {
   const { title, value, subtitle } = props;
   return (
-    <div
-      className={`
-  rounded-xl
-  border border-white/10
-  bg-white/3
-  p-5
-  shadow-[inset_0_1px_0_rgba(255,255,255,.06)]
-`}
-    >
+    <div className="rounded-xl border border-white/10 bg-white/3 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.06)]">
       <p className="text-xs tracking-wide text-white/60">{title}</p>
       <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
       <p className="mt-2 text-sm text-white/60">{subtitle}</p>
