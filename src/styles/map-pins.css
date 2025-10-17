@@ -1,0 +1,75 @@
+/* Material icon pins for Leaflet */
+
+:root {
+  --pin-bg: #0b1220; /* dark shell */
+  --pin-ring: rgba(98, 105, 255, 0.25);
+  --pin-green: #22c55e;   /* bus (on-time) */
+  --pin-blue:  #60a5fa;   /* rail */
+  --pin-amber: #f59e0b;   /* late pulse color */
+}
+
+.material-pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--pin-bg);
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.35),
+    inset 0 0 0 2px rgba(255,255,255,0.06);
+  transform: translateZ(0);
+  transition: transform .15s ease;
+  color: var(--pin-blue); /* default color if type not specified */
+}
+
+/* tiny “pointer” nub */
+.material-pin::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 2px var(--pin-bg);
+}
+
+.material-pin .material-symbols-rounded {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* hover pop */
+.material-pin:hover {
+  transform: translateZ(0) scale(1.06);
+}
+
+/* Variants by type */
+.material-pin[data-variant="bus"]  { color: var(--pin-green); }
+.material-pin[data-variant="rail"] { color: var(--pin-blue);  }
+
+/* Optional: pulsing halo for alerts/late */
+.pin-pulse::before {
+  content: "";
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, var(--pin-amber), transparent 70%);
+  opacity: 0.35;
+  animation: pinPulse 1.8s ease-out infinite;
+}
+
+@keyframes pinPulse {
+  0%   { transform: scale(0.65); opacity: 0.5; }
+  60%  { transform: scale(1.1);  opacity: 0.15; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* Leaflet resets to ensure the divIcon sizes anchor correctly */
+.leaflet-div-icon.material-divicon {
+  background: transparent;
+  border: 0;
+}

@@ -11,6 +11,10 @@ import "../styles/multiselect.css";
 import BusMarkers from "@/widgets/BusMarkers";
 import RailLinesOverlay from "@/widgets/RailLinesOverlay";
 import { BUS_ROUTES } from "@/data/routes";
+import MaterialPinsLayer, {
+  MaterialPin,
+} from "../widgets/MaterialPinsLayer";
+import { vehicles as mockVehicles } from "@/data/mock";
 
 type Mode = "bus" | "rail";
 type RailLineKey = "green" | "blue" | "red" | "orange" | "silver";
@@ -56,6 +60,58 @@ export default function LiveMap(): JSX.Element {
   }, []);
 
   const activeRouteIds = useMemo(() => selectedRoutes, [selectedRoutes]);
+
+  const normalizedRouteSet = useMemo(() => {
+    return new Set(activeRouteIds.map((id) => id.replace(/^0+/, "")));
+  }, [activeRouteIds]);
+
+  const busPins: MaterialPin[] = useMemo(() => {
+    const vehicles = mockVehicles.filter((v) => v.mode === "bus");
+    return vehicles
+      .filter((v) => {
+        if (!normalizedRouteSet.size) return true;
+        const routeId = String(v.routeShort ?? v.routeId ?? "").replace(
+          /^0+/,
+          ""
+        );
+        return normalizedRouteSet.has(routeId);
+      })
+      .map((v) => {
+        const statusText = (v.status ?? "")
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (m) => m.toUpperCase());
+        return {
+          id: `bus-${v.id}`,
+          lat: v.lat,
+          lng: v.lng,
+          type: "bus" as const,
+          label: `${v.label ?? v.id} • Route ${v.routeShort ?? v.routeId ?? ""}`.trim(),
+          subtitle: statusText ? `Status: ${statusText}` : undefined,
+          pulse: (v.status ?? "").toLowerCase().includes("late") ||
+            (v.status ?? "").toLowerCase().includes("off"),
+        } satisfies MaterialPin;
+      });
+  }, [normalizedRouteSet]);
+
+  const railPins: MaterialPin[] = useMemo(() => {
+    const vehicles = mockVehicles.filter((v) => v.mode === "rail");
+    return vehicles.map((v) => {
+      const statusText = (v.status ?? "")
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (m) => m.toUpperCase());
+      return {
+        id: `rail-${v.id}`,
+        lat: v.lat,
+        lng: v.lng,
+        type: "rail" as const,
+        label: `${v.label ?? v.id} • ${v.routeShort ? `Line ${v.routeShort}` : "Rail"}`.trim(),
+        subtitle: statusText ? `Status: ${statusText}` : undefined,
+        pulse: (v.status ?? "").toLowerCase().includes("off"),
+      } satisfies MaterialPin;
+    });
+  }, []);
+
+  const pins = useMemo(() => [...busPins, ...railPins], [busPins, railPins]);
 
   return (
     <div className="live-map-page">
@@ -219,6 +275,9 @@ export default function LiveMap(): JSX.Element {
                 <BusMarkers showStops={showStops} routeIds={activeRouteIds} />
               )}
               {mode === "rail" && <RailLinesOverlay visible={visible} />}
+
+              {/* NEW: Material Icons pins on top */}
+              <MaterialPinsLayer pins={pins} />
             </MapContainer>
           </div>
         </section>
