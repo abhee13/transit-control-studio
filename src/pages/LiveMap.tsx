@@ -5,8 +5,8 @@ import "leaflet/dist/leaflet.css";
 
 import BusMarkers from "@/widgets/BusMarkers";
 import RailLinesOverlay from "@/widgets/RailLinesOverlay";
-import RouteSelect from "@/widgets/RouteSelect";
 import { BUS_ROUTES } from "@/data/routes";
+import RouteMultiSelect from "@/components/RouteMultiSelect";
 
 type Mode = "bus" | "rail";
 type RailLineKey = "green" | "blue" | "red" | "orange" | "silver";
@@ -17,9 +17,9 @@ export default function LiveMap(): JSX.Element {
   const [mode, setMode] = useState<Mode>("bus");
 
   // Bus controls
-  const [route, setRoute] = useState<{ id: string; label: string } | null>(
-    null
-  );
+  const [selectedRoutes, setSelectedRoutes] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
   const [showStops, setShowStops] = useState<boolean>(true);
 
   // Rail visibility toggles
@@ -44,8 +44,13 @@ export default function LiveMap(): JSX.Element {
   void panelAndMapHeight;
 
   const routeOptions = useMemo(
-    () => BUS_ROUTES.map((r) => ({ id: r.id, label: r.name })),
+    () => BUS_ROUTES.map((r) => ({ id: r.id, name: r.name })),
     []
+  );
+
+  const activeRouteIds = useMemo(
+    () => selectedRoutes.map((r) => r.id),
+    [selectedRoutes]
   );
 
   return (
@@ -91,14 +96,12 @@ export default function LiveMap(): JSX.Element {
             <>
               <h2 className="text-sm tracking-wide text-white/70 mb-3">ROUTES</h2>
 
-              <div className="mb-4">
-                <RouteSelect
-                  routes={routeOptions}
-                  value={route}
-                  onChange={setRoute}
-                  placeholder="Type a route number or name..."
-                />
-              </div>
+              <RouteMultiSelect
+                routes={routeOptions}
+                value={selectedRoutes}
+                onChange={setSelectedRoutes}
+                className="mb-4"
+              />
 
               <label className="flex select-none items-center gap-3 text-white/90 text-sm">
                 <input
@@ -209,7 +212,7 @@ export default function LiveMap(): JSX.Element {
             />
 
             {mode === "bus" && (
-              <BusMarkers showStops={showStops} route={route?.id ?? null} />
+              <BusMarkers showStops={showStops} routeIds={activeRouteIds} />
             )}
             {mode === "rail" && <RailLinesOverlay visible={visible} />}
           </MapContainer>
