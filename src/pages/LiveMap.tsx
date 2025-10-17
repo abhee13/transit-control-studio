@@ -30,7 +30,7 @@ export default function LiveMap(): JSX.Element {
   const [showStops, setShowStops] = useState<boolean>(true);
 
   // Rail visibility toggles
-  const [visible, setVisible] = useState<Record<RailLineKey, boolean>>({
+  const [railVisibility, setRailVisibility] = useState<Record<RailLineKey, boolean>>({
     green: true,
     blue: false,
     red: false,
@@ -213,17 +213,17 @@ export default function LiveMap(): JSX.Element {
                       <button
                         key={k}
                         onClick={() =>
-                          setVisible((v) => ({ ...v, [k]: !v[k] }))
+                          setRailVisibility((v) => ({ ...v, [k]: !v[k] }))
                         }
                         className={`flex items-center justify-between rounded-2xl px-4 py-3 ring-1 transition ${
-                          visible[k]
+                          railVisibility[k]
                             ? "ring-indigo-500/60 bg-indigo-500/10 text-white"
                             : "ring-white/10 bg-white/5 text-white/80"
                         }`}
                       >
                         <span className="capitalize">{k} line</span>
                         <span className="text-xs">
-                          {visible[k] ? "Visible" : "Hidden"}
+                          {railVisibility[k] ? "Visible" : "Hidden"}
                         </span>
                       </button>
                     )
@@ -276,10 +276,15 @@ export default function LiveMap(): JSX.Element {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
 
-              {mode === "bus" && (
-                <BusMarkers showStops={showStops} routeIds={activeRouteIds} />
-              )}
-              {mode === "rail" && <RailLinesOverlay visible={visible} />}
+              <BusMarkers
+                visible={mode === "bus"}
+                showStops={showStops}
+                routeIds={activeRouteIds}
+              />
+              <RailLinesOverlay
+                visible={mode === "rail"}
+                lineVisibility={railVisibility}
+              />
 
               {/* NEW: Material Icons pins on top */}
               <MaterialPinsLayer pins={pins} />

@@ -126,7 +126,11 @@ export default function RouteMultiSelect({
               {selectedCount}/{options.length} selected
             </span>
           </div>
-          <ul className="rms-list" role="listbox" aria-multiselectable>
+          <ul
+            className="rms-list routes-dropdown"
+            role="listbox"
+            aria-multiselectable
+          >
             {filtered.length === 0 && (
               <li className="rms-empty">No matches</li>
             )}
