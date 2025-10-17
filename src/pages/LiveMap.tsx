@@ -45,41 +45,43 @@ export default function LiveMap(): JSX.Element {
       </header>
 
       {/* Sub-tabs */}
-      <div className="segment-group mb-4 flex items-center gap-4">
-        <button
-          onClick={() => setMode("bus")}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
-            mode === "bus"
-              ? "bg-indigo-600 text-white shadow"
-              : "bg-white/5 hover:bg-white/10 text-white/80"
-          }`}
-        >
-          Bus
-        </button>
-        <button
-          onClick={() => setMode("rail")}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
-            mode === "rail"
-              ? "bg-indigo-600 text-white shadow"
-              : "bg-white/5 hover:bg-white/10 text-white/80"
-          }`}
-        >
-          Rail
-        </button>
+      <div className="mb-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setMode("bus")}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+              mode === "bus"
+                ? "bg-indigo-600 text-white shadow"
+                : "bg-white/5 hover:bg-white/10 text-white/80"
+            }`}
+          >
+            Bus
+          </button>
+          <button
+            onClick={() => setMode("rail")}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+              mode === "rail"
+                ? "bg-indigo-600 text-white shadow"
+                : "bg-white/5 hover:bg-white/10 text-white/80"
+            }`}
+          >
+            Rail
+          </button>
+        </div>
       </div>
 
       {/* Left panel + Map */}
-      <section className="grid gap-6 lg:gap-8 [grid-template-columns:310px_minmax(0,1fr)] live-map-grid">
+      <section className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] items-start">
         {/* LEFT PANEL */}
         <aside
-          className="rounded-3xl bg-white/5 ring-1 ring-white/10 p-5 md:p-6 overflow-hidden live-map-sidebar"
+          className="sticky top-24 h-[calc(100vh-160px)] overflow-y-auto overflow-x-visible rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] p-6 space-y-6"
           style={{ height: panelAndMapHeight }}
         >
           {mode === "bus" ? (
             <>
               <h2 className="text-sm tracking-wide text-white/70 mb-3">ROUTES</h2>
 
-              <div className="mb-4">
+              <div className="mb-4 relative">
                 <input
                   type="text"
                   value={route}
@@ -184,7 +186,7 @@ export default function LiveMap(): JSX.Element {
         {/* MAP */}
         <div
           id="map-shell"
-          className="rounded-3xl ring-1 ring-white/10 bg-white/5 overflow-hidden live-map-frame"
+          className="rounded-2xl border border-white/10 overflow-hidden shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] bg-white/5 h-[calc(100vh-160px)]"
           style={{ height: panelAndMapHeight }}
         >
           <MapContainer
@@ -214,7 +216,7 @@ function KpiCard(props: {
 }): JSX.Element {
   const { title, value, subtitle } = props;
   return (
-    <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 px-4 py-4 kpi-card">
+    <div className="rounded-xl border border-white/10 bg-white/3 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.06)] kpi-card">
       <p className="text-xs tracking-wide text-white/60">{title}</p>
       <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
       <p className="mt-2 text-sm text-white/60">{subtitle}</p>
