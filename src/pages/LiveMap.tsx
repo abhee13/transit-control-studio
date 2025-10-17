@@ -91,7 +91,7 @@ export default function LiveMap(): JSX.Element {
         </div>
 
         {/* Left panel + Map */}
-        <section className="live-map-grid grid gap-10 lg:grid-cols-[380px_minmax(0,1fr)]">
+        <section className="live-map-bleed live-map-grid">
           {/* LEFT PANEL */}
           <aside
             className="lm-side-panel rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_10px_30px_rgba(2,6,23,.35),inset_0_1px_0_rgba(255,255,255,.08)] p-6 space-y-6"

@@ -1,22 +1,25 @@
-/* Live Map – compact gutters so the map gets more room */
+/* Live Map – compact gutters + full-bleed row so the map gets more space */
 
 :root {
-  /* page padding L/R and column gap scale sensibly with viewport */
-  --lm-gutter-x: clamp(12px, 2vw, 20px);
-  --lm-col-gap: clamp(12px, 1.6vw, 18px);
+  /* tighter L/R gutter just for this page */
+  --lm-gutter-x: clamp(10px, 1.6vw, 16px);
+  --lm-col-gap: clamp(10px, 1.4vw, 16px);
   --lm-sidebar-w: clamp(320px, 22vw, 360px);
 }
 
-/* Reduce horizontal padding only on the Live Map page */
-.live-map-page .page-shell,
-.live-map-page .page-inner,
-.live-map-page .container,
-.live-map-page main {
-  padding-left: var(--lm-gutter-x) !important;
-  padding-right: var(--lm-gutter-x) !important;
+/* Full-bleed row: escape any parent/container padding */
+.live-map-bleed {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+  padding-left: var(--lm-gutter-x);
+  padding-right: var(--lm-gutter-x);
 }
 
-/* Two-column area: sidebar + map */
+/* Two-column grid inside the full-bleed row */
 .live-map-grid {
   display: grid;
   grid-template-columns: var(--lm-sidebar-w) minmax(0, 1fr);
@@ -24,21 +27,16 @@
   gap: var(--lm-col-gap);
 }
 
-/* Ensure the map column uses all its space */
+/* Ensure the map can occupy its full column width */
 .live-map-grid .leaflet-container,
 .live-map-grid .map-card,
 .live-map-grid #map {
   width: 100%;
+  max-width: 100%;
 }
 
-/* Kill any stray extra left margin on the sidebar wrapper if present */
+/* Remove any stray left margins on the panel wrapper in this context */
 .live-map-page .left-panel,
 .live-map-page .panel-stack {
   margin-left: 0 !important;
-}
-
-/* Optional: tighten title spacing on this page only */
-.live-map-page .page-title {
-  margin-left: 0;
-  padding-left: 0;
 }
