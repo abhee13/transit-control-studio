@@ -112,7 +112,10 @@ export default function LiveMap(): JSX.Element {
     });
   }, []);
 
-  const pins = useMemo(() => [...busPins, ...railPins], [busPins, railPins]);
+  const pins = useMemo(
+    () => (mode === "bus" ? busPins : railPins),
+    [mode, busPins, railPins]
+  );
 
   return (
     <div className="live-map-page">
