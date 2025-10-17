@@ -1,8 +1,7 @@
 import { Fragment, useMemo } from "react";
 import { Marker, Tooltip as LeafletTooltip } from "react-leaflet";
+import L from "leaflet";
 import type { LatLngExpression } from "leaflet";
-
-import { makeRouteBadgeIcon } from "./map/markerIcons";
 
 // Demo data – keep/replace with your real feed
 const BUS_POINTS: Array<{
@@ -14,12 +13,14 @@ const BUS_POINTS: Array<{
   { id: "BUS-203", pos: [32.77, -96.81], status: "late" },
 ];
 
-const colorByStatus: Record<string, string> = {
-  onTime: "#22c55e",
-  late: "#f97316",
-  offline: "#ef4444",
-  default: "#5b6bfa",
-};
+// Reusable Material pin for buses
+const busDivIcon = (L as any).divIcon({
+  className: "pin pin--bus",
+  html: '<span class="material-symbols-rounded" aria-hidden="true">directions_bus</span>',
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -18],
+});
 
 export function BusMarkers({
   showStops,
@@ -44,27 +45,21 @@ export function BusMarkers({
   }, [routeIds]);
 
   // Using tuple type to avoid PointExpression import (not present in your leaflet types)
-  const tooltipOffset: [number, number] = [0, 8];
+  const tooltipOffset: [number, number] = [0, -18];
 
   return (
     <Fragment>
-      {filtered.map((b) => {
-        const [, label = b.id] = b.id.split("-");
-        const color = colorByStatus[b.status ?? "default"] ?? colorByStatus.default;
-        const icon = makeRouteBadgeIcon({
-          label,
-          color,
-          pulse: b.status === "late" || b.status === "offline",
-        });
-
-        return (
-          <Marker key={b.id} position={b.pos} {...({ icon } as any)}>
-            <LeafletTooltip direction="top" offset={tooltipOffset} opacity={1}>
-              <div className="text-xs font-medium">{b.id}</div>
-            </LeafletTooltip>
-          </Marker>
-        );
-      })}
+      {filtered.map((b) => (
+        <Marker
+          key={b.id}
+          position={b.pos}
+          {...({ icon: busDivIcon, zIndexOffset: 1000 } as any)}
+        >
+          <LeafletTooltip direction="top" offset={tooltipOffset} opacity={1}>
+            <div className="text-xs font-medium">{b.id}</div>
+          </LeafletTooltip>
+        </Marker>
+      ))}
 
       {/* Optionally render stops if showStops is true */}
       {showStops ? null : null}
