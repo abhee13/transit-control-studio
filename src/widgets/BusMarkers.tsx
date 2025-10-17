@@ -14,15 +14,25 @@ const BUS_POINTS: Array<{
 
 export function BusMarkers({
   showStops,
-  route,
+  routeIds,
 }: {
   showStops: boolean;
-  route: string | null;
+  routeIds: string[];
 }) {
   const filtered = useMemo(() => {
-    // If you want to filter markers by route, handle here
-    return BUS_POINTS;
-  }, [route]);
+    if (!routeIds.length) return BUS_POINTS;
+
+    const normalized = new Set(
+      routeIds.map((id) => id.replace(/^0+/, ""))
+    );
+
+    return BUS_POINTS.filter((b) => {
+      const [, maybeId] = b.id.split("-");
+      if (!maybeId) return false;
+      const trimmed = maybeId.replace(/^0+/, "");
+      return normalized.has(trimmed);
+    });
+  }, [routeIds]);
 
   // Using tuple type to avoid PointExpression import (not present in your leaflet types)
   const tooltipOffset: [number, number] = [0, 8];

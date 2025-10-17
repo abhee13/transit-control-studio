@@ -95,6 +95,10 @@
   color: #e5e7eb;
 }
 
+.lm-side-panel .combobox-input {
+  min-width: 8ch;
+}
+
 /* Layering fixes so dropdowns sit above the map */
 .leaflet-container { z-index: 10; }
 .dropdown-surface { z-index: 1000; }
