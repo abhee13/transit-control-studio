@@ -45,7 +45,7 @@ export default function LiveMap(): JSX.Element {
       </header>
 
       {/* Sub-tabs */}
-      <div className="mb-4 flex items-center gap-4">
+      <div className="segment-group mb-4 flex items-center gap-4">
         <button
           onClick={() => setMode("bus")}
           className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
@@ -69,10 +69,10 @@ export default function LiveMap(): JSX.Element {
       </div>
 
       {/* Left panel + Map */}
-      <section className="grid gap-6 lg:gap-8 [grid-template-columns:310px_minmax(0,1fr)]">
+      <section className="grid gap-6 lg:gap-8 [grid-template-columns:310px_minmax(0,1fr)] live-map-grid">
         {/* LEFT PANEL */}
         <aside
-          className="rounded-3xl bg-white/5 ring-1 ring-white/10 p-5 md:p-6 overflow-hidden"
+          className="rounded-3xl bg-white/5 ring-1 ring-white/10 p-5 md:p-6 overflow-hidden live-map-sidebar"
           style={{ height: panelAndMapHeight }}
         >
           {mode === "bus" ? (
@@ -184,7 +184,7 @@ export default function LiveMap(): JSX.Element {
         {/* MAP */}
         <div
           id="map-shell"
-          className="rounded-3xl ring-1 ring-white/10 bg-white/5 overflow-hidden"
+          className="rounded-3xl ring-1 ring-white/10 bg-white/5 overflow-hidden live-map-frame"
           style={{ height: panelAndMapHeight }}
         >
           <MapContainer
@@ -214,7 +214,7 @@ function KpiCard(props: {
 }): JSX.Element {
   const { title, value, subtitle } = props;
   return (
-    <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 px-4 py-4">
+    <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 px-4 py-4 kpi-card">
       <p className="text-xs tracking-wide text-white/60">{title}</p>
       <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
       <p className="mt-2 text-sm text-white/60">{subtitle}</p>

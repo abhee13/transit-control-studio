@@ -1,0 +1,62 @@
+/* ==== Live Map layout polish (non-breaking, styles only) ==== */
+
+/* Sidebar + Map two-column grid on wide screens */
+@media (min-width: 1120px) {
+  .live-map-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr; /* fixed sidebar, fluid map */
+    gap: 2rem;
+    align-items: start;
+  }
+  .live-map-grid .live-map-sidebar {
+    max-width: 360px;
+    width: 360px;
+  }
+  .live-map-grid .live-map-frame {
+    width: 100%;
+  }
+}
+
+/* Make the map fill the card and be tall enough */
+.live-map-frame .leaflet-container {
+  /* Height is responsive and fills the card */
+  height: min(78vh, 1100px);
+  width: 100%;
+  border-radius: 16px;
+}
+
+/* Give the card itself a bit more vertical room so the map can breathe */
+.live-map-frame {
+  min-height: 72vh; /* ensures the map card is taller and removes the bottom gap */
+}
+
+/* Route dropdown: stay on top but clipped to the sidebar column */
+.live-map-sidebar {
+  position: relative; /* anchor the dropdown inside the column */
+  overflow: visible;  /* allow the menu to overlay cards within the sidebar column */
+  z-index: 0;         /* reset stacking context cleanly */
+}
+.route-dropdown {
+  position: absolute;
+  top: calc(100% + 8px); /* drop just below the input */
+  left: 0;
+  right: 0;
+  max-height: 360px;
+  overflow: auto;
+  z-index: 40; /* above cards but below global nav */
+  /* feel free to keep your existing menu styles */
+}
+
+/* Add a little breathing room between the Bus/Rail segmented buttons */
+.segment-group {
+  display: inline-flex;
+  gap: 12px;
+}
+
+/* Optional: unify the small KPI cards inside the sidebar */
+.live-map-sidebar .kpi-card {
+  /* your existing card classes will still apply —
+     this merely keeps consistent spacing if your cards
+     use different utilities in different places */
+  margin-top: 1rem;
+}
