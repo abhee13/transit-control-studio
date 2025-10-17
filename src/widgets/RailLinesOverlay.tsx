@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Marker, Polyline, Tooltip as LeafletTooltip } from "react-leaflet";
+import { LayerGroup, Marker, Polyline, Tooltip as LeafletTooltip } from "react-leaflet";
 import L from "leaflet";
 import type { LatLngExpression } from "leaflet";
 
@@ -26,17 +26,22 @@ const railDivIcon = (L as any).divIcon({
   popupAnchor: [0, -18],
 });
 
+type RailLinesOverlayProps = {
+  lineVisibility: Record<RailLineKey, boolean>;
+  visible?: boolean;
+};
+
 export function RailLinesOverlay({
-  visible,
-}: {
-  visible: Record<RailLineKey, boolean>;
-}) {
+  lineVisibility,
+  visible = true,
+}: RailLinesOverlayProps) {
+  if (!visible) return null;
   // Using tuple type to avoid PointExpression import
   const tooltipOffset: [number, number] = [0, -18];
 
   return (
-    <Fragment>
-      {RAIL_LINES.filter((l) => visible[l.key]).map((l) => {
+    <LayerGroup>
+      {RAIL_LINES.filter((l) => lineVisibility[l.key]).map((l) => {
         const markerPosition = l.coords[0];
 
         return (
@@ -58,7 +63,7 @@ export function RailLinesOverlay({
           </Fragment>
         );
       })}
-    </Fragment>
+    </LayerGroup>
   );
 }
 

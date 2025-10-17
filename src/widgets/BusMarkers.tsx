@@ -1,5 +1,5 @@
-import { Fragment, useMemo } from "react";
-import { Marker, Tooltip as LeafletTooltip } from "react-leaflet";
+import { useMemo } from "react";
+import { LayerGroup, Marker, Tooltip as LeafletTooltip } from "react-leaflet";
 import L from "leaflet";
 import type { LatLngExpression } from "leaflet";
 
@@ -22,13 +22,18 @@ const busDivIcon = (L as any).divIcon({
   popupAnchor: [0, -18],
 });
 
+type BusMarkersProps = {
+  showStops: boolean;
+  routeIds: string[];
+  visible?: boolean;
+};
+
 export function BusMarkers({
   showStops,
   routeIds,
-}: {
-  showStops: boolean;
-  routeIds: string[];
-}) {
+  visible = true,
+}: BusMarkersProps) {
+  if (!visible) return null;
   const filtered = useMemo(() => {
     if (!routeIds.length) return BUS_POINTS;
 
@@ -48,7 +53,7 @@ export function BusMarkers({
   const tooltipOffset: [number, number] = [0, -18];
 
   return (
-    <Fragment>
+    <LayerGroup>
       {filtered.map((b) => (
         <Marker
           key={b.id}
@@ -63,7 +68,7 @@ export function BusMarkers({
 
       {/* Optionally render stops if showStops is true */}
       {showStops ? null : null}
-    </Fragment>
+    </LayerGroup>
   );
 }
 
