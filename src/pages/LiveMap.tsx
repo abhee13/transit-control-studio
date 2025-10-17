@@ -3,10 +3,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
+import RouteMultiSelect, {
+  Option as RouteOption,
+} from "../components/RouteMultiSelect";
+import "../styles/multiselect.css";
 import BusMarkers from "@/widgets/BusMarkers";
 import RailLinesOverlay from "@/widgets/RailLinesOverlay";
 import { BUS_ROUTES } from "@/data/routes";
-import RouteMultiSelect from "@/components/RouteMultiSelect";
 
 type Mode = "bus" | "rail";
 type RailLineKey = "green" | "blue" | "red" | "orange" | "silver";
@@ -17,9 +20,7 @@ export default function LiveMap(): JSX.Element {
   const [mode, setMode] = useState<Mode>("bus");
 
   // Bus controls
-  const [selectedRoutes, setSelectedRoutes] = useState<
-    Array<{ id: string; name: string }>
-  >([]);
+  const [selectedRoutes, setSelectedRoutes] = useState<string[]>([]);
   const [showStops, setShowStops] = useState<boolean>(true);
 
   // Rail visibility toggles
@@ -43,15 +44,17 @@ export default function LiveMap(): JSX.Element {
   const panelAndMapHeight = useMemo(() => Math.max(640, vh - HEADER_OFFSET), [vh]);
   void panelAndMapHeight;
 
-  const routeOptions = useMemo(
-    () => BUS_ROUTES.map((r) => ({ id: r.id, name: r.name })),
-    []
-  );
+  const routeOptions: RouteOption[] = useMemo(() => {
+    const catalog = BUS_ROUTES ?? [];
+    return catalog.map((r: any) => {
+      const id = String(r.id ?? r.code ?? r.routeId ?? r.value ?? r);
+      const code = r.code ?? r.shortName ?? id;
+      const name = r.name ?? r.longName ?? r.label ?? "";
+      return { id, label: name ? `${code} — ${name}` : `${code}` };
+    });
+  }, []);
 
-  const activeRouteIds = useMemo(
-    () => selectedRoutes.map((r) => r.id),
-    [selectedRoutes]
-  );
+  const activeRouteIds = useMemo(() => selectedRoutes, [selectedRoutes]);
 
   return (
     <main className="w-full max-w-[1600px] mx-auto px-4 md:px-6 pt-6 pb-10">
@@ -97,10 +100,9 @@ export default function LiveMap(): JSX.Element {
               <h2 className="text-sm tracking-wide text-white/70 mb-3">ROUTES</h2>
 
               <RouteMultiSelect
-                routes={routeOptions}
-                value={selectedRoutes}
+                options={routeOptions}
+                selected={selectedRoutes}
                 onChange={setSelectedRoutes}
-                className="mb-4"
               />
 
               <label className="flex select-none items-center gap-3 text-white/90 text-sm">

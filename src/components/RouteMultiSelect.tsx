@@ -1,141 +1,153 @@
-import { Fragment, useMemo, useRef, useState, type SVGProps } from "react";
-import { Combobox, Transition } from "@headlessui/react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 
-type Route = { id: string; name: string };
+export type Option = { id: string; label: string };
 
 type Props = {
-  routes: Route[];
-  value: Route[];
-  onChange: (next: Route[]) => void;
+  options: Option[];
+  selected: string[];
+  onChange: (ids: string[]) => void;
   placeholder?: string;
+  disabled?: boolean;
   className?: string;
 };
 
 export default function RouteMultiSelect({
-  routes,
-  value,
+  options,
+  selected,
   onChange,
   placeholder = "Type a route number or name…",
+  disabled,
   className = "",
 }: Props) {
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const filtered = useMemo(() => {
-    if (!query) return routes;
+    if (!query.trim()) return options;
     const q = query.toLowerCase();
-    return routes.filter(
-      (r) => r.id.toLowerCase().includes(q) || r.name.toLowerCase().includes(q)
+    return options.filter(
+      (o) => o.label.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)
     );
-  }, [routes, query]);
+  }, [options, query]);
 
-  const isSelected = (r: Route) => value.some((v) => v.id === r.id);
-  const toggle = (r: Route) =>
-    isSelected(r)
-      ? onChange(value.filter((v) => v.id !== r.id))
-      : onChange([...value, r]);
+  const toggle = (id: string) => {
+    if (selected.includes(id)) onChange(selected.filter((s) => s !== id));
+    else onChange([...selected, id]);
+  };
+
+  const allVisibleIds = filtered.map((o) => o.id);
+
+  const selectAllVisible = () => {
+    const merged = Array.from(new Set([...selected, ...allVisibleIds]));
+    onChange(merged);
+  };
+
+  const clearVisible = () => {
+    onChange(selected.filter((id) => !allVisibleIds.includes(id)));
+  };
+
+  const clearAll = () => onChange([]);
+
+  const selectedCount = selected.length;
 
   return (
-    <div className={`lm-side-panel ${className}`}>
-      <Combobox multiple value={value} onChange={onChange}>
-        <div className="relative">
-          <div className="flex items-center rounded-2xl border border-white/10 bg-panel-dark px-3 py-2 ring-1 ring-inset ring-white/5 focus-within:ring-2 focus-within:ring-indigo-400">
-            <Combobox.Input
-              className="ml-1 flex-1 bg-transparent text-[15px] leading-6 text-slate-100 placeholder:text-slate-400 focus:outline-none"
-              placeholder={value.length ? "" : placeholder}
-              displayValue={() => ""}
-              onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => btnRef.current?.click()} // auto-open on focus
-            />
-            <Combobox.Button
-              ref={btnRef}
-              className="ml-1 rounded-lg p-1.5 text-slate-400 hover:bg-white/10"
-              aria-label="Toggle routes menu"
-            >
-              <ChevronDownIcon className="h-4 w-4" />
-            </Combobox.Button>
-          </div>
+    <div ref={rootRef} className={`route-multi-select ${className}`}>
+      {/* Input */}
+      <div
+        className={`rms-input ${disabled ? "rms-disabled" : ""}`}
+        onClick={() => !disabled && setOpen((v) => !v)}
+      >
+        <input
+          className="rms-input-field"
+          type="text"
+          placeholder={placeholder}
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            if (!open) setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          disabled={disabled}
+        />
+        <span className="rms-caret" aria-hidden>
+          ▾
+        </span>
+      </div>
 
-          <Transition
-            as={Fragment}
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 -translate-y-1"
-          >
-            <Combobox.Options
-              className="route-menu absolute z-[70] mt-2 max-h-72 w-full overflow-auto rounded-2xl border border-white/10 bg-[rgba(10,14,25,0.98)] p-1 shadow-2xl backdrop-blur"
-              data-ui="route-menu"
-            >
-              <div className="mb-1 flex items-center justify-between gap-2 rounded-xl bg-white/5 px-2 py-1.5 text-xs text-slate-300">
-                <button
-                  type="button"
-                  className="rounded-lg px-2 py-1 hover:bg-white/10"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => onChange(routes)}
-                >
-                  Select all
-                </button>
-                <button
-                  type="button"
-                  className="rounded-lg px-2 py-1 hover:bg-white/10"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => onChange([])}
-                >
-                  Clear
-                </button>
-                <span className="opacity-60">
-                  {value.length}/{routes.length} selected
-                </span>
-              </div>
-
-              {filtered.length === 0 ? (
-                <div className="px-3 py-3 text-sm text-slate-400">No matches</div>
-              ) : (
-                filtered.map((r) => (
-                  <Combobox.Option key={r.id} value={r} as={Fragment}>
-                    {({ active }) => {
-                      const selected = isSelected(r);
-                      return (
-                        <div
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => toggle(r)}
-                          className={`item flex cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-[14px] ${
-                            active ? "bg-white/10 text-slate-50" : "text-slate-200"
-                          }`}
-                        >
-                          <div className="flex items-baseline gap-2">
-                            <span className="tabular-nums text-slate-300">
-                              {r.id}
-                            </span>
-                            <span className="opacity-80">{r.name}</span>
-                          </div>
-                          {selected && <CheckIcon className="h-4 w-4 text-indigo-300" />}
-                        </div>
-                      );
-                    }}
-                  </Combobox.Option>
-                ))
-              )}
-            </Combobox.Options>
-          </Transition>
+      {/* Chips */}
+      {selectedCount > 0 && (
+        <div className="rms-chips">
+          {selected.slice(0, 8).map((id) => {
+            const opt = options.find((o) => o.id === id);
+            const label = opt?.label ?? id;
+            return (
+              <button
+                key={id}
+                className="rms-chip"
+                onClick={() => toggle(id)}
+                title="Remove"
+              >
+                {label}
+                <span className="rms-x">×</span>
+              </button>
+            );
+          })}
+          {selectedCount > 8 && (
+            <span className="rms-more">+{selectedCount - 8} more</span>
+          )}
+          <button className="rms-clear-all" onClick={clearAll}>
+            Clear
+          </button>
         </div>
-      </Combobox>
+      )}
+
+      {/* Dropdown */}
+      {open && !disabled && (
+        <div className="rms-popover">
+          <div className="rms-toolbar">
+            <button onClick={selectAllVisible}>
+              Select all
+            </button>
+            <button onClick={clearVisible}>
+              Clear visible
+            </button>
+            <span className="rms-count">
+              {selectedCount}/{options.length} selected
+            </span>
+          </div>
+          <ul className="rms-list" role="listbox" aria-multiselectable>
+            {filtered.length === 0 && (
+              <li className="rms-empty">No matches</li>
+            )}
+            {filtered.map((o) => {
+              const isSel = selected.includes(o.id);
+              return (
+                <li
+                  key={o.id}
+                  className={`rms-item ${isSel ? "rms-item--sel" : ""}`}
+                  onClick={() => toggle(o.id)}
+                >
+                  <span className={`rms-check ${isSel ? "rms-check--on" : ""}`}>
+                    ✓
+                  </span>
+                  <span className="rms-label">{o.label}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
-  );
-}
-
-function CheckIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 8.25l3 3 5.5-6" />
-    </svg>
-  );
-}
-
-function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.5l4.25 4 4.25-4" />
-    </svg>
   );
 }
