@@ -36,101 +36,110 @@ export default function LiveMap() {
     const isRail = panelMode === "rail";
 
     return (
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[340px_1fr]">
-        {/* Side panel */}
-        <aside className="space-y-4">
-          {/* Bus-only filter */}
-          {isBus && (
-            <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
-              <h3 className="mb-3 text-sm font-semibold text-slate-300">ROUTES</h3>
-              <RouteSelect
-                routes={BUS_ROUTE_OPTIONS}
-                value={selectedRoute}
-                onChange={setSelectedRoute}
-                placeholder="Type a route number or name..."
-              />
-              <label className="mt-3 flex items-center gap-2 text-sm text-slate-300">
-                <input
-                  type="checkbox"
-                  checked={showStops}
-                  onChange={() => setShowStops((s) => !s)}
-                  className="h-4 w-4 accent-indigo-500"
+      <div className="grid grid-cols-12 gap-6">
+        {/* Layout grid (left panel + map). Keep your left panel as-is. */}
+        {/* Left panel (routes + KPIs). Keep your existing content here. */}
+        <aside className="col-span-12 xl:col-span-4 space-y-6">
+          <div className="space-y-4">
+            {/* Bus-only filter */}
+            {isBus && (
+              <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
+                <h3 className="mb-3 text-sm font-semibold text-slate-300">ROUTES</h3>
+                <RouteSelect
+                  routes={BUS_ROUTE_OPTIONS}
+                  value={selectedRoute}
+                  onChange={setSelectedRoute}
+                  placeholder="Type a route number or name..."
                 />
-                Show stops
-              </label>
-              <p className="mt-2 text-xs text-slate-500">UI only demo with mock data</p>
-            </div>
-          )}
+                <label className="mt-3 flex items-center gap-2 text-sm text-slate-300">
+                  <input
+                    type="checkbox"
+                    checked={showStops}
+                    onChange={() => setShowStops((s) => !s)}
+                    className="h-4 w-4 accent-indigo-500"
+                  />
+                  Show stops
+                </label>
+                <p className="mt-2 text-xs text-slate-500">UI only demo with mock data</p>
+              </div>
+            )}
 
-          {/* Rail-only toggles */}
-          {isRail && (
-            <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
-              <h3 className="mb-3 text-sm font-semibold text-slate-300">RAIL LINES</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {RAIL_LINES.map((l) => {
-                  const active = visibleRail[l.key];
-                  return (
-                    <button
-                      key={l.key}
-                      onClick={() =>
-                        setVisibleRail((v) => ({ ...v, [l.key]: !v[l.key] }))
-                      }
-                      className={`flex items-center justify-between rounded-xl border px-3 py-2 text-left text-sm ${
-                        active
-                          ? "border-indigo-500/50 bg-slate-800/60"
-                          : "border-slate-700/60 bg-slate-900/60"
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <span
-                          className="inline-block h-2.5 w-2.5 rounded-full"
-                          style={{ background: l.color }}
-                        />
-                        <span className="text-slate-200">{l.label}</span>
-                      </span>
-                      <span
-                        className={`text-xs ${
-                          active ? "text-indigo-400" : "text-slate-500"
+            {/* Rail-only toggles */}
+            {isRail && (
+              <div className="relative rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 shadow-lg backdrop-blur overflow-visible">
+                <h3 className="mb-3 text-sm font-semibold text-slate-300">RAIL LINES</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {RAIL_LINES.map((l) => {
+                    const active = visibleRail[l.key];
+                    return (
+                      <button
+                        key={l.key}
+                        onClick={() =>
+                          setVisibleRail((v) => ({ ...v, [l.key]: !v[l.key] }))
+                        }
+                        className={`flex items-center justify-between rounded-xl border px-3 py-2 text-left text-sm ${
+                          active
+                            ? "border-indigo-500/50 bg-slate-800/60"
+                            : "border-slate-700/60 bg-slate-900/60"
                         }`}
                       >
-                        {active ? "Visible" : "Hidden"}
-                      </span>
-                    </button>
-                  );
-                })}
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            style={{ background: l.color }}
+                          />
+                          <span className="text-slate-200">{l.label}</span>
+                        </span>
+                        <span
+                          className={`text-xs ${
+                            active ? "text-indigo-400" : "text-slate-500"
+                          }`}
+                        >
+                          {active ? "Visible" : "Hidden"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* KPI cards (shared) */}
-          <KpiCard title="Active vehicles" value="3" hint="Vehicles currently tracking on selected routes." />
-          <KpiCard title="On time" value="2" hint="Vehicles meeting schedule expectations." />
-          <KpiCard title="Late" value="1" hint="Requires attention to improve headways." />
-          <KpiCard title="Off route" value="0" hint="Investigate diversions or disruptions." />
+            {/* KPI cards (shared) */}
+            <KpiCard title="Active vehicles" value="3" hint="Vehicles currently tracking on selected routes." />
+            <KpiCard title="On time" value="2" hint="Vehicles meeting schedule expectations." />
+            <KpiCard title="Late" value="1" hint="Requires attention to improve headways." />
+            <KpiCard title="Off route" value="0" hint="Investigate diversions or disruptions." />
+          </div>
         </aside>
 
-        {/* Map column */}
-        <section className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-2 shadow-xl">
-          {/* Removed Expand map button */}
-          <div className="relative">
-            <MapContainer
-              center={center}
-              zoom={zoom}
-              className="h-[68vh] min-h-[560px] w-full rounded-xl overflow-hidden"
-              preferCanvas
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; OpenStreetMap contributors'
-              />
-              {isBus && (
-                <BusMarkers
-                  showStops={showStops}
-                  route={selectedRoute ? selectedRoute.id : null}
+        {/* Full-bleed map on the right */}
+        <section className="col-span-12 xl:col-span-8">
+          {/* Card with zero padding and overflow-hidden to remove inner gaps */}
+          <div className="rounded-2xl bg-slate-900/40 ring-1 ring-white/10 overflow-hidden">
+            {/* Give the map a responsive, viewport-based height.
+                Tune the value if you want it taller/shorter. */}
+            <div className="w-full h-[72vh] min-h-[560px]">
+              <MapContainer
+                center={center}
+                zoom={zoom}
+                className="w-full h-full"
+                zoomControl={false}
+                attributionControl={true}
+                preferCanvas
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; OpenStreetMap contributors'
                 />
-              )}
-              {isRail && <RailLinesOverlay visible={visibleRail} />}
-            </MapContainer>
+                {isBus && (
+                  <BusMarkers
+                    showStops={showStops}
+                    route={selectedRoute ? selectedRoute.id : null}
+                  />
+                )}
+                {isRail && <RailLinesOverlay visible={visibleRail} />}
+              </MapContainer>
+            </div>
           </div>
         </section>
       </div>
