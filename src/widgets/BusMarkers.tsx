@@ -84,20 +84,17 @@ export function BusMarkers({
 
   return (
     <LayerGroup>
-      {filtered.map((b) => {
-        const icon = busDivIcon({ status: statusOf(b) });
-        return (
-          <Marker
-            key={b.id}
-            position={b.pos}
-            {...({ icon, zIndexOffset: 1000 } as any)}
-          >
-            <LeafletTooltip direction="top" offset={tooltipOffset} opacity={1}>
-              <div className="text-xs font-medium">{b.label ?? b.id}</div>
-            </LeafletTooltip>
-          </Marker>
-        );
-      })}
+      {filtered.map((b) => (
+        <Marker
+          key={b.id}
+          position={b.pos}
+          {...({ icon: busDivIcon({ status: statusOf(b) }), zIndexOffset: 1000 } as any)}
+        >
+          <LeafletTooltip direction="top" offset={tooltipOffset} opacity={1}>
+            <div className="text-xs font-medium">{b.label ?? b.id}</div>
+          </LeafletTooltip>
+        </Marker>
+      ))}
 
       {/* Optionally render stops if showStops is true */}
       {showStops ? null : null}
