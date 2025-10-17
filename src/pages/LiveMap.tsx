@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/page-live-map.css";
+import "../styles/live-map.css";
 
 import RouteMultiSelect, {
   Option as RouteOption,
@@ -60,12 +61,13 @@ export default function LiveMap(): JSX.Element {
   return (
     <div className="live-map-page">
       <main className="w-full max-w-[1600px] mx-auto px-4 md:px-6 pt-6 pb-10">
-        <header className="mb-5 flex items-center justify-between">
+        <header
+          className="lm-header mb-6 flex-wrap"
+          aria-label="Live map header"
+        >
           <h1 className="text-2xl md:text-3xl font-semibold">Live Network Map</h1>
-        </header>
 
-        {/* Sub-tabs */}
-        <div className="mb-4">
+          {/* Sub-tabs */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMode("bus")}
@@ -88,7 +90,7 @@ export default function LiveMap(): JSX.Element {
               Rail
             </button>
           </div>
-        </div>
+        </header>
 
         {/* Left panel + Map */}
         <section className="live-map-bleed live-map-grid">

@@ -60,3 +60,26 @@
      use different utilities in different places */
   margin-top: 1rem;
 }
+
+/* Live Map header padding trim — scoped so nothing else moves */
+.lm-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Nudge left slightly to line up with the left panel’s rounded card */
+  margin-left: -12px;      /* desktop */
+  padding-left: 0;         /* ensure no extra inner padding */
+}
+
+/* Keep things tidy at smaller widths */
+@media (max-width: 1024px) {
+  .lm-header {
+    margin-left: -8px;     /* gentler nudge on tablets */
+  }
+}
+
+@media (max-width: 640px) {
+  .lm-header {
+    margin-left: 0;        /* no negative margins on phones */
+  }
+}
