@@ -1,5 +1,6 @@
 import { Fragment } from "react";
-import { Polyline, Tooltip as LeafletTooltip } from "react-leaflet";
+import { Marker, Polyline, Tooltip as LeafletTooltip } from "react-leaflet";
+import L from "leaflet";
 import type { LatLngExpression } from "leaflet";
 
 export type RailLineKey = "green" | "blue" | "red" | "orange" | "silver";
@@ -17,27 +18,46 @@ export const RAIL_LINES: Array<{
   { key: "silver", label: "Silver Line", color: "#cbd5e1", coords: [[32.782, -96.83], [32.77, -96.79]] },
 ];
 
+const railDivIcon = (L as any).divIcon({
+  className: "pin pin--rail",
+  html: '<span class="material-symbols-rounded" aria-hidden="true">tram</span>',
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -18],
+});
+
 export function RailLinesOverlay({
   visible,
 }: {
   visible: Record<RailLineKey, boolean>;
 }) {
   // Using tuple type to avoid PointExpression import
-  const tooltipOffset: [number, number] = [0, 8];
+  const tooltipOffset: [number, number] = [0, -18];
 
   return (
     <Fragment>
-      {RAIL_LINES.filter((l) => visible[l.key]).map((l) => (
-        <Polyline
-          key={l.key}
-          positions={l.coords}
-          pathOptions={{ color: l.color, weight: 5, opacity: 0.9 }}
-        >
-          <LeafletTooltip direction="top" offset={tooltipOffset} opacity={1}>
-            <div className="text-xs font-medium">{l.label}</div>
-          </LeafletTooltip>
-        </Polyline>
-      ))}
+      {RAIL_LINES.filter((l) => visible[l.key]).map((l) => {
+        const markerPosition = l.coords[0];
+
+        return (
+          <Fragment key={l.key}>
+            <Polyline
+              positions={l.coords}
+              pathOptions={{ color: l.color, weight: 5, opacity: 0.9 }}
+            />
+            {markerPosition ? (
+              <Marker
+                position={markerPosition}
+                {...({ icon: railDivIcon, zIndexOffset: 900 } as any)}
+              >
+                <LeafletTooltip direction="top" offset={tooltipOffset} opacity={1}>
+                  <div className="text-xs font-medium">{l.label}</div>
+                </LeafletTooltip>
+              </Marker>
+            ) : null}
+          </Fragment>
+        );
+      })}
     </Fragment>
   );
 }
