@@ -1,6 +1,8 @@
 import { Fragment, useMemo } from "react";
-import { CircleMarker, Tooltip as LeafletTooltip } from "react-leaflet";
+import { Marker, Tooltip as LeafletTooltip } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
+
+import { makeRouteBadgeIcon } from "./map/markerIcons";
 
 // Demo data – keep/replace with your real feed
 const BUS_POINTS: Array<{
@@ -11,6 +13,13 @@ const BUS_POINTS: Array<{
   { id: "BUS-315", pos: [32.7767, -96.797], status: "onTime" },
   { id: "BUS-203", pos: [32.77, -96.81], status: "late" },
 ];
+
+const colorByStatus: Record<string, string> = {
+  onTime: "#22c55e",
+  late: "#f97316",
+  offline: "#ef4444",
+  default: "#5b6bfa",
+};
 
 export function BusMarkers({
   showStops,
@@ -40,24 +49,20 @@ export function BusMarkers({
   return (
     <Fragment>
       {filtered.map((b) => {
-        const pathOptions =
-          b.status === "onTime"
-            ? { color: "#22c55e", weight: 2, fillColor: "#22c55e", fillOpacity: 0.85, opacity: 0.9 }
-            : b.status === "late"
-            ? { color: "#f97316", weight: 2, fillColor: "#f97316", fillOpacity: 0.85, opacity: 0.9 }
-            : { color: "#64748b", weight: 2, fillColor: "#64748b", fillOpacity: 0.85, opacity: 0.9 };
+        const [, label = b.id] = b.id.split("-");
+        const color = colorByStatus[b.status ?? "default"] ?? colorByStatus.default;
+        const icon = makeRouteBadgeIcon({
+          label,
+          color,
+          pulse: b.status === "late" || b.status === "offline",
+        });
 
         return (
-          <CircleMarker
-            key={b.id}
-            center={b.pos}
-            radius={8}
-            pathOptions={pathOptions}
-          >
+          <Marker key={b.id} position={b.pos} {...({ icon } as any)}>
             <LeafletTooltip direction="top" offset={tooltipOffset} opacity={1}>
               <div className="text-xs font-medium">{b.id}</div>
             </LeafletTooltip>
-          </CircleMarker>
+          </Marker>
         );
       })}
 
