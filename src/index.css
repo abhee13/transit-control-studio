@@ -63,3 +63,18 @@
 .panel-surface { position: relative; overflow: visible; z-index: 10; }
 .leaflet-container, .leaflet-pane, .leaflet-map-pane { will-change: transform; }
 .leaflet-container { height: 100%; width: 100%; }
+
+/* Ensure Leaflet always fills its parent, removing weird inner gaps */
+.leaflet-container,
+.leaflet-pane,
+.leaflet-map-pane,
+.leaflet-tile-pane {
+  width: 100%;
+  height: 100%;
+}
+
+/* If you wrap the map in a card/content component that adds padding,
+   make sure that content is p-0 in JSX. This rule is a safe fallback. */
+.card-map .leaflet-container {
+  height: 100%;
+}
