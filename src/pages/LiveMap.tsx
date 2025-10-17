@@ -11,6 +11,7 @@ import RouteMultiSelect, {
 import "../styles/multiselect.css";
 import BusMarkers from "@/widgets/BusMarkers";
 import RailLinesOverlay from "@/widgets/RailLinesOverlay";
+import LegendControl from "@/widgets/LegendControl";
 import { BUS_ROUTES } from "@/data/routes";
 import MaterialPinsLayer, {
   MaterialPin,
@@ -271,6 +272,7 @@ export default function LiveMap(): JSX.Element {
               scrollWheelZoom
               className="w-full h-[720px] md:h-[800px]"
             >
+              <LegendControl />
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
