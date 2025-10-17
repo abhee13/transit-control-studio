@@ -48,7 +48,31 @@
 }
 .rms-toolbar > button:hover { background: rgba(126,140,255,.22); }
 .rms-count { margin-left: auto; color: #9fb1ff; font-size: 12px; }
-.rms-list { max-height: 280px; overflow: auto; list-style: none; margin: 0; padding: 6px; }
+.rms-list {
+  max-height: 280px;
+  overflow: auto;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148,163,184,.65) transparent;
+}
+.rms-list::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.rms-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rms-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(148,163,184,.7), rgba(148,163,184,.45));
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.rms-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(203,213,225,.85), rgba(148,163,184,.65));
+}
 .rms-empty { padding: 16px; color: #9fb1ff; font-size: 14px; }
 .rms-item {
   display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: center;
